@@ -14,16 +14,16 @@ spec:
     spec:
       containers:
         - name: postgre
-          image: postgres:15.0
+          image: postgres:14.3
           ports:
             - containerPort: 5432
           env:
-            - name: POSTGRES_DB
-              value: "kubenews"
+            - name: POSTGRES_PASSWORD
+              value: "Kube#123"
             - name: POSTGRES_USER
               value: "kubenews"
-            - name: POSTGRES_PASSWORD
-              value: "Pg#123"
+            - name: POSTGRES_DB
+              value: "kubenews"
 ---
 apiVersion: v1
 kind: Service
@@ -34,50 +34,50 @@ spec:
     app: postgre
   ports:
     - port: 5432
-  type: ClusterIP
-
+      targetPort: 5432
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: web
+  name: kubenews
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: web
+      app: kubenews
   template:
     metadata:
       labels:
-        app: web
+        app: kubenews
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8081"
         prometheus.io/path: "/metrics"
     spec:
       containers:
-        - name: web
+        - name: kubenews
           image: klesiocp/kube-news:{{TAG}}
-          ports:
-            - containerPort: 8081
+                    ports:
+          - containerPort: 8081
           env:
             - name: DB_DATABASE
               value: "kubenews"
             - name: DB_USERNAME
               value: "kubenews"
             - name: DB_PASSWORD
-              value: "Pg#123"
+              value: "Kube#123"
             - name: DB_HOST
               value: "postgre"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: web
+  name: kube-news
 spec:
   selector:
-    app: web
+    app: kubenews
   ports:
     - port: 80
       targetPort: 8081
+      nodePort: 30000
   type: LoadBalancer

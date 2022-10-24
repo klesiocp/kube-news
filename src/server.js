@@ -7,9 +7,9 @@ const config = require('./system-life');
 const middlewares = require('./middleware')
 
 const metricsMiddleware = promBundle({
-    includeMethod: true, 
-    includePath: true, 
-    includeStatusCode: true, 
+    includeMethod: true,
+    includePath: true,
+    includeStatusCode: true,
     includeUp: true,
     customLabels: {
         version: "v1"
@@ -53,6 +53,6 @@ app.get('/', async (req, res) => {
 });
 
 models.initDatabase();
-app.listen(8080);
+app.listen(8081);
 
-console.log('Aplicação rodando na porta 8080');
+console.log('Aplicação rodando na porta 8081');
